@@ -1,11 +1,10 @@
-import { findRestaurant, filter } from "../../server/actions"
+
+import { findRestaurant, findRestaurantNeighborhood } from "../../server/actions"
 
 
-
-export const findRestaurantServerCall = async () => {
+export const findRestaurantServerCall = async (cuisine, borough, sortVar) => {
   try {
-    const restaurant = await findRestaurant()
-  
+    const restaurant = await findRestaurant(cuisine, borough, sortVar)
     return restaurant
   } catch (e) {
     return {
@@ -15,50 +14,51 @@ export const findRestaurantServerCall = async () => {
   }
 }
 
-export const filterServerCall = async (q = {}) => {
+export const findRestaurantNeighborhoodServerCall = async (neighborhood) => {
   try {
-    const { borough } = q
-    const bor = await filter({ borough })
-    return {
-      success: true,
-      payload: bor,
-    }
+    const restaurant = await findRestaurantNeighborhood(neighborhood)
+    return restaurant
   } catch (e) {
     return {
       success: false,
-      message: "Failed to run action!",
+      message: "ruh roh",
     }
   }
 }
 
+const handler = (req, res) => {
+  const cuisine = req.query.cuisine
+  const borough = req.query.borough
+  const sorting = req.query.sort_by
+  const neighborhood = req.query.neighborhood
+  // console.log(neighborhood)
+  // console.log(coord)
+  let sortVar = null
+  if (sorting) {
+    const val = sorting.split('.')[1]
+    if (val === 'asc') {
+      sortVar = '-grades.0.score'
+    } 
+    if (val === 'desc') {
+      sortVar = 'grades.0.score'
+    }
+  }
 
-const handler = (req, res) =>
-  
-  findRestaurantServerCall().then((payload) => {
-    const cuisine = req.query.cuisine
-    const borough = req.query.borough
-    let specifications = {};
-    if (cuisine) {
-      specifications['cuisine'] = cuisine;
-    }
-    if (borough) {
-      specifications['borough'] = borough;
-    }
-    const sorting = req.query.sort_by;
-    let sortRestaurants = {};
-    if (sorting) {
-      const val = sorting.split('.')[1]
-      if (val === 'asc') {
-        sortRestaurants['grades.0.score'] = 1
-      } else {
-        sortRestaurants['grades.0.score'] = -1
-      }
-      specifications['grades.0.score'] = {$gt : 0};
-    }
+  if (neighborhood) {
+    findRestaurantNeighborhoodServerCall(neighborhood).then((payload) => {
+      if (payload.success) res.status(200)
+      else res.status(500)
+      res.json(payload)
+    })
+
+  } else {
+  findRestaurantServerCall(cuisine, borough, sortVar).then((payload) => {
     if (payload.success) res.status(200)
     else res.status(500)
     res.json(payload)
   })
+  }
+}
 
 
 export default handler

@@ -1,3 +1,5 @@
+import { POINT_CONVERSION_COMPRESSED } from 'constants'
+
 const mongoose = require('mongoose')
 
 const { Schema } = mongoose
