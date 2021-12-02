@@ -1,11 +1,10 @@
+
 import { findBoroughs } from "../../../server/actions"
 
 export const findBoroughsServerCall = async ({ }) => {
   try {
     const borough = await findBoroughs()
-    return {
-        borough,
-    }
+    return borough
   } catch (e) {
     return {
       success: false,

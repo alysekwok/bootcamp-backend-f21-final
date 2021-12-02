@@ -75,6 +75,7 @@ export default function Home() {
         <button onClick={()=>getRestaurants()}>Apply Filters</button>
 
         {restaurants.map((r,i)=> <RestaurantRow key={r.restaurant_id} restaurant={r}/>)}
+
         
         
       </main>

@@ -3,9 +3,7 @@ import { findCuisine } from "../../../server/actions"
 export const findCuisineServerCall = async ({ }) => {
   try {
     const cuisine = await findCuisine()
-    return {
-        cuisine,
-    }
+    return cuisine
   } catch (e) {
     return {
       success: false,

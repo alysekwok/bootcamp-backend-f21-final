@@ -3,9 +3,7 @@ import { findNeighborhood } from "../../../server/actions"
 export const findNeighborhoodServerCall = async ({}) => {
   try {
     const neighborhood = await findNeighborhood()
-    return {
-        neighborhood,
-    }
+    return neighborhood
   } catch (e) {
     return {
       success: false,

@@ -4,7 +4,12 @@ import Neighborhood from "./models/Neighborhood"
 
 export async function findRestaurant() {
     await mongoDB()
-    const restaurant = await Restaurant.find({}).limit(10)
+    // const boroughs = await Restaurant.findOne().distinct('borough')
+    // const cuisines = await Restaurant.findOne().distinct('cuisine')
+    const restaurant = await Restaurant.find({})
+                                .limit(10)
+                                .skip();
+                                    
     return restaurant
   }
 
@@ -26,6 +31,16 @@ export async function findRestaurant() {
     return neighborhood
   }
 
+ 
+  export async function filter({ cuisine, borough }) {
+    await mongodb()
+
+    const rest = await Restaurant.findOne({ cuisine, borough })
+    if (!rest) return "No Restaurant Found"
+    return {
+      ...rest.toObject(),
+    }
+  }
 
 
 
