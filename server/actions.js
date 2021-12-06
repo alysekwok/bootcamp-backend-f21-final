@@ -20,18 +20,10 @@ export async function findRestaurant(cuisine, borough, sortVar) {
 
 export async function findRestaurantNeighborhood(neighborhood) {
   await mongoDB()
-  const denver = { type: 'Point', coordinates: [ -73.8601152, 40.7311739] };
-  
-  // const denver = { type: 'Point', coordinates: [-104.9903, 39.7392] };
   const geo = await Neighborhood.findOne({name:neighborhood}).distinct('geometry')
-  const restaurantCoord = await Restaurant.find({}).where('address.coord').equals(denver.coordinates)
-  // console.log(restaurantCoord)
-
   const restaurant = await Restaurant.find({}).where()
-                            .where(denver.coordinates)
+                            .where('address.coord')
                             .within().geometry(geo[0])
-                            .skip();
-  // console.log(restaurant)
   return restaurant
 }
 
